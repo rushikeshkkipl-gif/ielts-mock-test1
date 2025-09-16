@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IELTS Mock Test</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="container">
+
+    <!-- Left Side: Question Paper -->
+    <div id="left-side">
+      <h2>Question Paper</h2>
+      <iframe id="questionFrame" src="https://drive.google.com/file/d/1hM1NoGTjwUUDjNS9cPmFGJGf-x_hIlo9/preview"></iframe>
+    </div>
+
+    <!-- Right Side: Student Answers -->
+    <div id="right-side">
+      <h1>Student Answer Area</h1>
+
+      <label for="name">Your Name:</label>
+      <input type="text" id="name" required>
+
+      <label for="email">Your Email:</label>
+      <input type="email" id="email" required>
+
+      <div id="timer"></div>
+      <div class="warning" id="warning-msg"></div>
+
+      <!-- Listening Section -->
+      <div id="listening-section" class="section active">
+        <h2>Listening Section</h2>
+
+        <!-- Listening Audio -->
+        <audio id="listeningAudio" preload="auto">
+          <source src="https://dl.dropboxusercontent.com/scl/fi/1howuaxohnypx5s6lknoy/IELTS-WEEK-3-LISTENING-AUDIO.mp3?rlkey=zw92bqp02v1945f8sorj0b4hd&st=nqd8dll6&raw=1">
+        </audio>
+        <div style="margin-top:10px;">
+          <button type="button" id="playBtn">Play</button>
+          <span id="audioTimer" style="margin-left:10px;">0:00 / 0:00</span>
+        </div>
+
+        <div id="listeningAnswers" class="answer-grid">
+          <table>
+            <tbody>
+              <!-- Listening 40 inputs -->
+              <script>
+                for (let i=1;i<=40;i++){
+                  document.write(
+                    `<tr>
+                       <td><label>${i}</label>
+                       <input type="text" name="listeningQ${i}"></td>
+                     </tr>`
+                  );
+                }
+              </script>
+            </tbody>
+          </table>
+        </div>
+
+        <button onclick="nextSection('reading-section')">Next: Reading</button>
+      </div>
+
+      <!-- Reading Section -->
+      <div id="reading-section" class="section">
+        <h2>Reading Section</h2>
+        <div id="readingAnswers" class="answer-grid">
+          <table>
+            <tbody>
+              <!-- Reading 40 inputs -->
+              <script>
+                for (let i=1;i<=40;i++){
+                  document.write(
+                    `<tr>
+                       <td><label>${i}</label>
+                       <input type="text" name="readingQ${i}"></td>
+                     </tr>`
+                  );
+                }
+              </script>
+            </tbody>
+          </table>
+        </div>
+        <button onclick="nextSection('writing-section')">Next: Writing</button>
+      </div>
+
+      <!-- Writing Section -->
+      <div id="writing-section" class="section">
+        <h2>Writing Section</h2>
+        <label for="writingTask1">Task 1:</label>
+        <textarea id="writingTask1" rows="20" placeholder="Enter writing task 1..."></textarea>
+        <div id="wordCount1">Word count: 0</div>
+        <label for="writingTask2">Task 2:</label>
+        <textarea id="writingTask2" rows="30" placeholder="Enter writing task 2..."></textarea>
+        <div id="wordCount2">Word count: 0</div>
+        <button onclick="submitForm()">Submit All</button>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+// ---------------- AUDIO CONTROL ----------------
+document.addEventListener('DOMContentLoaded', () => {
+  const audio = document.getElementById('listeningAudio');
+  let manualPause = false;
+  audio.addEventListener('pause', () => {
+    if (!manualPause && !audio.ended) audio.play();
+  });
+  window.pauseAudioFromScript = () => {
+    manualPause = true;
+    audio.pause();
+    manualPause = false;
+  };
+});
+
+// ---------------- ENDPOINT ----------------
+const endpointURL = "https://script.google.com/macros/s/AKfycbwvyF5gbDDdYh5Ddnmvl4wy0p_Cj0wRrGq-4eiOGPQ4Z3FsgbHHPJpaz6F6Rvvlr7Y34g/exec";
+
+// ---------------- TIMERS ----------------
+const sectionTimers = {
+  "listening-section": 31*60,
+  "reading-section": 61*60,
+  "writing-section": 61*60
+};
+
+let warnings = [];
+let currentSection = "listening-section";
+let timerInterval;
+const timerElement = document.getElementById('timer');
+
+// anti-cheat: track leaving page
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    warnings.push(`Left window during ${currentSection}`);
+    document.getElementById("warning-msg").textContent =
+      `Warning: You left the test window ${warnings.length} time(s).`;
+  }
+});
+
+// start timer
+function startTimer(sectionId) {
+  clearInterval(timerInterval);
+  let remaining = sectionTimers[sectionId];
+  timerInterval = setInterval(() => {
+    const minutes = Math.floor(remaining/60);
+    const seconds = remaining % 60;
+    timerElement.textContent = `Time left: ${minutes}:${seconds.toString().padStart(2,'0')}`;
+
+    if (remaining === 300) { alert("5 minutes left!"); }
+    if (remaining === 60) { alert("1 minute left!"); }
+
+    remaining--;
+    if (remaining < 0) {
+      clearInterval(timerInterval);
+      if (sectionId === 'listening-section') nextSection('reading-section');
+      else if (sectionId === 'reading-section') nextSection('writing-section');
+      else submitForm();
+    }
+  }, 1000);
+}
+
+// ---------------- SECTION SWITCH ----------------
+function nextSection(sectionId) {
+  const audio = document.getElementById('listeningAudio');
+  if (audio && !audio.paused) audio.pause();
+
+  const questionFrame = document.getElementById('questionFrame');
+  if (sectionId === 'reading-section') {
+    questionFrame.src = 'https://drive.google.com/file/d/1pZEOpFCHzonWkXl5_Gma9vbPCns_B5vN/preview';
+  } else if (sectionId === 'writing-section') {
+    questionFrame.src = 'https://drive.google.com/file/d/1fU2-AsSAD0xp_DZFvtjKuOfA-Z31tg6j/preview';
+  }
+
+  document.getElementById(currentSection).classList.remove('active');
+  document.getElementById(sectionId).classList.add('active');
+  currentSection = sectionId;
+  startTimer(sectionId);
+}
+
+startTimer(currentSection);
+
+// ---------------- SUBMIT ----------------
+function submitForm() {
+  clearInterval(timerInterval);
+
+  const getAnswers = (containerId) =>
+    Array.from(document.querySelectorAll(`#${containerId} input`))
+      .map(el => el.value.trim());
+
+  const payload = {
+    name: document.getElementById("name").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    listening: getAnswers("listeningAnswers").join("|"),
+    reading: getAnswers("readingAnswers").join("|"),
+    writingTask1: document.getElementById("writingTask1").value.trim(),
+    writingTask2: document.getElementById("writingTask2").value.trim(),
+    warnings: warnings
+  };
+
+  if(!payload.name || !payload.email){
+    alert("Please fill your name and email.");
+    return;
+  }
+
+  fetch(endpointURL,{
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  })
+  .then(()=>{
+    alert("Your answers have been submitted!");
+    document.querySelectorAll("input,textarea,button").forEach(el=>el.disabled=true);
+  })
+  .catch(err=>alert("Error submitting: "+err));
+}
+
+function countWords(text) {
+  if (!text) return 0;
+  return text.trim().split(/\s+/).length;
+}
+
+const writing1 = document.getElementById("writingTask1");
+const writing2 = document.getElementById("writingTask2");
+const wordCount1 = document.getElementById("wordCount1");
+const wordCount2 = document.getElementById("wordCount2");
+
+writing1.addEventListener("input", () => {
+  wordCount1.textContent = `Word count: ${countWords(writing1.value)}`;
+});
+
+writing2.addEventListener("input", () => {
+  wordCount2.textContent = `Word count: ${countWords(writing2.value)}`;
+});
+
+// ===== Custom Play/Pause Buttons =====
+const audio = document.getElementById("listeningAudio");
+const playBtn = document.getElementById("playBtn");
+const audioTimer = document.getElementById('audioTimer');
+
+// Play / Pause
+playBtn.addEventListener("click", () => audio.play());
+
+// ===== Prevent Seeking / Skipping =====
+let lastTime = 0;
+
+audio.addEventListener("timeupdate", () => {
+  const formatTime = (sec) => {
+    const minutes = Math.floor(sec / 60);
+    const seconds = Math.floor(sec % 60);
+    return `${minutes}:${seconds.toString().padStart(2,'0')}`;
+  };
+  audioTimer.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+});
+
+audio.addEventListener("seeking", () => {
+  if (audio.currentTime > lastTime) {
+    audio.currentTime = lastTime;
+  }
+});
+
+// ===== Prevent Manual Pause (optional, keep from old code) =====
+let manualPause = false;
+audio.addEventListener("pause", () => {
+  if (!manualPause && !audio.ended) audio.play();
+});
+window.pauseAudioFromScript = () => {
+  manualPause = true;
+  audio.pause();
+  manualPause = false;
+};
+
+
+</script>
+</body>
+</html>
