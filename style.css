@@ -1,1 +1,182 @@
-body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f8f5f0; /* off-white background */ color: #330001; /* dark red text */ } #container { display: flex; height: 100vh; } #left-side { flex: 1; padding: 20px; overflow-y: auto; box-sizing: border-box; border-right: 2px solid #cc4444; /* light red border */ background-color: #f8f5f0; } #right-side { flex: 1; padding: 20px; overflow-y: auto; box-sizing: border-box; background-color: #fff0f0; /* very light red tint */ } h2 { margin-top: 20px; color: #990000; } label { font-weight: bold; display: block; margin-top: 10px; color: #660000; } textarea, input { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #cc4444; border-radius: 4px; background-color: #fffaf5; /* off-white input background */ color: #330000; } button { padding: 10px 20px; font-size: 1em; margin-top: 10px; background-color: #cc4444; /* light red button */ color: #fff; border: none; border-radius: 5px; cursor: pointer; } button:hover { background-color: #990000; /* dark red on hover */ } #timer { font-size: 1.2em; color: #cc4444; margin: 10px 0; } .warning { color: darkorange; font-size: 0.9em; } iframe { width: 100%; height: 80vh; border: none; } /* Answer grid table */ .answer-grid table { border-collapse: collapse; width: 100%; margin-top: 10px; } .answer-grid td { border: 1px solid #cc4444; padding: 4px; width: 50%; } .answer-grid label { display: inline-block; width: 20px; font-weight: bold; } .answer-grid input { width: calc(100% - 30px); padding: 2px 4px; background-color: #fffaf5; color: #330000; } /* Hide all sections by default */ .section { display: none; } /* Show only the active section */ .section.active { display: block; /* or flex if you want it to be flex */ }
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Container layout */
+#container {
+  display: flex;
+  height: 100vh;
+  background: #f4f6f9;
+}
+
+/* Left Side (PDFs / Questions) */
+#left-side {
+  width: 40%;
+  background: #ffffff;
+  border-right: 2px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+#left-side h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: #333;
+}
+
+#left-side iframe {
+  width: 100%;
+  height: 90%;
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+}
+
+/* Right Side (Answer Area) */
+#right-side {
+  width: 60%;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+#right-side h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a73e8;
+  margin-bottom: 1rem;
+}
+
+/* Form labels & inputs */
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #444;
+  display: block;
+  margin: 0.6rem 0 0.2rem;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  font-size: 0.95rem;
+  transition: 0.3s;
+}
+
+input:focus, textarea:focus {
+  border-color: #1a73e8;
+  box-shadow: 0 0 4px rgba(26,115,232,0.4);
+}
+
+/* Section headers */
+.section h2 {
+  margin: 1rem 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #222;
+}
+
+/* Answer Grid */
+.answer-grid table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.answer-grid td {
+  padding: 0.4rem;
+}
+
+.answer-grid label {
+  font-weight: 500;
+  margin-right: 0.4rem;
+}
+
+.answer-grid input {
+  width: 90%;
+  padding: 0.4rem;
+  font-size: 0.9rem;
+}
+
+/* Timer & Warning */
+#timer {
+  background: #1a73e8;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.6rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+}
+
+.warning {
+  color: #d93025;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Buttons */
+button {
+  margin-top: 1rem;
+  padding: 0.7rem 1.4rem;
+  border: none;
+  border-radius: 6px;
+  background: #1a73e8;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #1558b0;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Audio Player Styling */
+audio {
+  width: 100%;
+  margin: 1rem 0;
+}
+
+/* Active Section Highlight */
+.section {
+  display: none;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+
+.section.active {
+  display: block;
+}
+
+/* Scrollbars for Answer Area */
+#right-side::-webkit-scrollbar {
+  width: 8px;
+}
+
+#right-side::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+#right-side::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
