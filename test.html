@@ -205,17 +205,19 @@ function submitForm() {
     return;
   }
 
-  fetch(endpointURL,{
-    method:"POST",
-    mode:"no-cors",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(payload)
-  })
-  .then(()=>{
-    alert("Your answers have been submitted!");
-    document.querySelectorAll("input,textarea,button").forEach(el=>el.disabled=true);
-  })
-  .catch(err=>alert("Error submitting: "+err));
+  fetch(endpointURL, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(payload)
+})
+.then(response => response.text())
+.then(result => {
+  alert("Submission successful!");
+  document.querySelectorAll("input,textarea,button").forEach(el => el.disabled = true);
+})
+.catch(err => alert("Error submitting: " + err));
 }
 
 function countWords(text) {
@@ -278,3 +280,4 @@ window.pauseAudioFromScript = () => {
 </body>
 
 </html>
+
