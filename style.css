@@ -15,7 +15,7 @@
 
 /* Left Side (PDFs / Questions) */
 #left-side {
-  width: 40%;
+  width: 60%;
   background: #ffffff;
   border-right: 2px solid #e0e0e0;
   display: flex;
@@ -41,7 +41,7 @@
 
 /* Right Side (Answer Area) */
 #right-side {
-  width: 60%;
+  width: 40%;
   padding: 1.5rem;
   overflow-y: auto;
 }
